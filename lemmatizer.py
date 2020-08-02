@@ -14,7 +14,33 @@ class LatinLemmatizer(Lemmatizer):
 
     This file was downloaded from the French language module on 2020/06/15
     and adapted to the needs of Latin
+
+    The uncommented portion is taken from the Greek lemmatizer on 2020/08/01
     """
+
+    def lemmatize(self, string, index, exceptions, rules):
+        string = string.lower()
+        forms = []
+        if string in index:
+            forms.append(string)
+            return forms
+        forms.extend(exceptions.get(string, []))
+        oov_forms = []
+        if not forms:
+            for old, new in rules:
+                if string.endswith(old):
+                    form = string[: len(string) - len(old)] + new
+                    if not form:
+                        pass
+                    elif form in index or not form.isalpha():
+                        forms.append(form)
+                    else:
+                        oov_forms.append(form)
+        if not forms:
+            forms.extend(oov_forms)
+        if not forms:
+            forms.append(string)
+        return list(set(forms))
 
 #    def __call__(self, string, univ_pos, morphology=None):
 #        lookup_table = self.lookups.get_table("lemma_lookup", {})
