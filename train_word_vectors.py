@@ -79,12 +79,12 @@ def main(
     lang='la',
     in_dir=path,
     out_loc='tmp/la_vectors_phi',
-    negative=5,
+    negative=20,
     n_workers=4,
-    window=5,
-    size=128,
+    window=10,
+    size=300,
     min_count=10,
-    nr_iter=1,
+    nr_iter=10,
 ):
     logging.basicConfig(
         format="%(asctime)s : %(levelname)s : %(message)s", level=logging.INFO
@@ -99,8 +99,12 @@ def main(
         workers=n_workers,
         sample=1e-5,
         negative=negative,
+        iter=nr_iter
     )
-    model.save(out_loc)
+    # as per ticket #5862, changing the below to make loadable by spacy; will still
+    # have to run spacy init-model afterwards
+    # model.save(out_loc)
+    model.wv.save_word2vec_format(out_loc)
 
 if __name__ == "__main__":
     plac.call(main)
