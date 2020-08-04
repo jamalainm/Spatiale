@@ -9,11 +9,24 @@ import plac
 import spacy
 from file_path import path
 # from spacy.lang import la
-# from roman_abbreviations import abbvs
+from roman_abbreviations import abbvs
 from unidecode import unidecode
 from cltk.stem.latin.j_v import JVReplacer
+import re
 
 logger = logging.getLogger(__name__)
+
+def numeral_remove(some_stuff):
+    new_stuff = re.sub("\d+", "", some_stuff)
+
+    return new_stuff
+
+def jv_replace(some_stuff):
+    j = JVReplacer()
+
+    new_stuff = j.replace(some_stuff)
+
+    return new_stuff
 
 
 class Corpus(object):
@@ -30,7 +43,7 @@ class Corpus(object):
             # sentencize) from being too long. It works particularly well with
             # the output of [WikiExtractor](https://github.com/attardi/wikiextractor)
 
-#            # need to got sentence by sentence; added 2020/08/03
+            # need to got sentence by sentence; added 2020/08/03
 #            tokens = text.split(' ')
 #            for i,token in enumerate(tokens):
 #                if ".'" in token:
@@ -48,12 +61,14 @@ class Corpus(object):
 #            new_text = ' '.join(tokens)
 #            new_text = unidecode(new_text)
 #
-#            # What follows was part of the original file
+            # Added 2020-08-03 to standardize the texts a bit
+            text = unidecode(text)
+            text = jv_replace(text)
+            text = numeral_remove(text)
+            # What follows was part of the original file
 
-            paragraphs = text.split('\n\n')
+            paragraphs = text.split('\n')
             for par in paragraphs:
-
-#                print(par)
                 yield [word.orth_ for word in self.nlp(par)]
 
 
@@ -82,10 +97,10 @@ def main(
     lang='la',
     in_dir=path,
     out_loc='tmp/la_vectors_phi',
-    negative=20,
+    negative=10,
     n_workers=4,
-    window=10,
-    size=300,
+    window=5,
+    size=128,
     min_count=10,
     nr_iter=1,
 ):
