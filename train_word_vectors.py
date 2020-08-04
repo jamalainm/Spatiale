@@ -97,12 +97,12 @@ def main(
     lang='la',
     in_dir=path,
     out_loc='tmp/la_vectors_phi',
-    negative=10,
+    negative=20,
     n_workers=4,
-    window=5,
-    size=128,
+    window=10,
+    size=300,
     min_count=10,
-    nr_iter=1,
+    nr_iter=10,
 ):
     logging.basicConfig(
         format="%(asctime)s : %(levelname)s : %(message)s", level=logging.INFO
