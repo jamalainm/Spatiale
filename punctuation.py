@@ -30,7 +30,7 @@ _suffixes = (
         r"(?<=[{au}][{au}])\.".format(au=ALPHA_UPPER),
         r"que".format(p=CONJ),
         r"ne".format(p=PART),
-        r"ve".format(p=CONJ),
+        r"ue".format(p=CONJ),
     ]
 )
 

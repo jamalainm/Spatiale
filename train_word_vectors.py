@@ -9,8 +9,9 @@ import plac
 import spacy
 from file_path import path
 # from spacy.lang import la
-from roman_abbreviations import abbvs
+# from roman_abbreviations import abbvs
 from unidecode import unidecode
+from cltk.stem.latin.j_v import JVReplacer
 
 logger = logging.getLogger(__name__)
 
@@ -29,28 +30,30 @@ class Corpus(object):
             # sentencize) from being too long. It works particularly well with
             # the output of [WikiExtractor](https://github.com/attardi/wikiextractor)
 
-            # need to got sentence by sentence; added 2020/08/03
-            tokens = text.split(' ')
-            for i,token in enumerate(tokens):
-                if ".'" in token:
-                    tokens[i] += '\n'
-                elif '."' in token:
-                    tokens[i] += '\n'
-                elif '.' in token:
-                    if token not in abbvs:
-                        tokens[i] += '\n'
+#            # need to got sentence by sentence; added 2020/08/03
+#            tokens = text.split(' ')
+#            for i,token in enumerate(tokens):
+#                if ".'" in token:
+#                    tokens[i] += '\n'
+#                elif '."' in token:
+#                    tokens[i] += '\n'
+#                elif '.' in token:
+#                    if token not in abbvs:
+#                        tokens[i] += '\n'
+#
+#                if len(token) > 0 and token[-1] == '-':
+#                    tokens[i] += tokens[i+1]
+#                    tokens.pop(i+1)
+#
+#            new_text = ' '.join(tokens)
+#            new_text = unidecode(new_text)
+#
+#            # What follows was part of the original file
 
-                if len(token) > 0 and token[-1] == '-':
-                    tokens[i] += tokens[i+1]
-                    tokens.pop(i+1)
-
-            new_text = ' '.join(tokens)
-            new_text = unidecode(new_text)
-
-            # What follows was part of the original file
-
-            paragraphs = text.split('\n')
+            paragraphs = text.split('\n\n')
             for par in paragraphs:
+
+#                print(par)
                 yield [word.orth_ for word in self.nlp(par)]
 
 
@@ -84,7 +87,7 @@ def main(
     window=10,
     size=300,
     min_count=10,
-    nr_iter=10,
+    nr_iter=1,
 ):
     logging.basicConfig(
         format="%(asctime)s : %(levelname)s : %(message)s", level=logging.INFO
